@@ -1,12 +1,14 @@
 import { IUser } from "../../types/userTypes";
-import { IUserDto } from "./IUserDto";
+import {IUserLoginDTO } from "./IUserDto";
 
 export class UserResponseMapper {
-    static toLoginUserResponse(user:IUser): IUserDto {
+    static toLoginUserResponse(user:IUser,tocken:string,refreshToken:string): IUserLoginDTO {
         return {
             userId:user._id.toString(), 
             name: user.username,
-            email: user.email
+            email: user.email,
+            tocken,
+            refreshToken
         }
     }
 } 

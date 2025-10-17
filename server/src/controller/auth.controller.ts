@@ -11,6 +11,7 @@ import {
   throwError,
 } from "../utils/response";
 import { validateBodyFields } from "../utils/validateRequest";
+import { setTokensInCookies } from "../utils/jwtToken";
 
 @injectable()
 export class AuthController implements IAuthController {
@@ -26,7 +27,7 @@ export class AuthController implements IAuthController {
       if (!email || !password) throwError(messages.common.missingFields);
 
       const result = await this._authServices.login(email, password);
-
+      setTokensInCookies(res,result.tocken,result.refreshToken)
       sendResponse(
         res,
         StatusCode.OK,
@@ -40,11 +41,10 @@ export class AuthController implements IAuthController {
   }
 
   async signup(req: Request, res: Response): Promise<void> {
-    validateBodyFields(req, ["name","email", "password","confirmPassword"])
-    const { name, email, password, confirmPassword } = req.body;
     try {
+      const { name, email, password, confirmPassword } = req.body;
+       validateBodyFields(req, ["name","email", "password","confirmPassword"])
       if (password !== confirmPassword) throwError(messages.auth.passwordNotMatch);
-
       const result = await this._authServices.signup({
         name,
         email,

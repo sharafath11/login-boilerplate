@@ -6,9 +6,10 @@ import { TYPES } from "../core/types";
 import { throwError } from "../utils/response";
 import { messages } from "../const/messages";
 import { UserResponseMapper } from "../dtos/user/userResponseMapper";
-import { IUserDto } from "../dtos/user/IUserDto";
+import { IUserDto, IUserLoginDTO } from "../dtos/user/IUserDto";
 import { UserForwardMapper } from "../dtos/user/userForwardMapper";
 import { ISignup } from "../types/authTypes";
+import { generateAccessToken, generateRefreshToken } from "../utils/jwtToken";
  
 
 @injectable()
@@ -18,21 +19,21 @@ export class AuthService implements IAuthService {
     private  _authRepo: IAuthRepository
   ) {}
 
-  async login(email: string, password: string): Promise<IUserDto> {
+  async login(email: string, password: string): Promise<IUserLoginDTO> {
     const user = await this._authRepo.findOne({ email });
     if (!user) throwError(messages.auth.accountNotFound);
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throwError(messages.auth.invalidCredentials);
-
-    return UserResponseMapper.toLoginUserResponse(user);
+    const token = generateAccessToken(user._id as unknown as string,"user");
+    const refreshToken = generateRefreshToken(user._id as unknown as string,"user");
+    return UserResponseMapper.toLoginUserResponse(user,token,refreshToken);
   }
 
-    async signup(data: ISignup): Promise<IUserDto> {
+    async signup(data: ISignup): Promise<void> {
     const existingUser = await this._authRepo.findOne({ email: data.email });
     if (existingUser) throwError(messages.auth.emailAlreadyExists);
     const userData = await UserForwardMapper.toUserEntity(data);
-    const createdUser = await this._authRepo.create(userData);
-    return UserResponseMapper.toLoginUserResponse(createdUser);
+    await this._authRepo.create(userData);
   }
 }
