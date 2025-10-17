@@ -24,7 +24,7 @@ export class AuthController implements IAuthController {
     try {
       validateBodyFields(req, ["email", "password"])
       const { email, password } = req.body;
-      if (!email || !password) throwError(MESSAGES.COMMON.MISSING_FIELDS);
+      if (!email || !password) throwError(MESSAGES.COMMON.MISSING_FIELDS,StatusCode.BAD_REQUEST);
 
       const result = await this._authServices.login(email, password);
       setTokensInCookies(res,result.tocken,result.refreshToken)
@@ -44,7 +44,7 @@ export class AuthController implements IAuthController {
     try {
       const { name, email, password, confirmPassword } = req.body;
        validateBodyFields(req, ["name","email", "password","confirmPassword"])
-      if (password !== confirmPassword) throwError(MESSAGES.AUTH.PASSWORD_NOT_MATCH);
+      if (password !== confirmPassword) throwError(MESSAGES.AUTH.PASSWORD_NOT_MATCH,StatusCode.BAD_REQUEST);
       const result = await this._authServices.signup({
         name,
         email,
@@ -66,7 +66,6 @@ export class AuthController implements IAuthController {
     try {
       const token = req.cookies.token;
       const decode = decodeToken(token);
-      console.log("deoded",decode)
       if(!decode)throwError(MESSAGES.AUTH.AUTH_REQUIRED)
       const result = await this._authServices.getUser(decode?.id);
       sendResponse(res,StatusCode.OK,MESSAGES.COMMON.SUCCESS,true,result)
@@ -77,16 +76,7 @@ export class AuthController implements IAuthController {
   async refeshToken(req: Request, res: Response): Promise<void> {
     try {
       const tokens = refreshAccessToken(req.cookies.refreshToken);
-
-      if (!tokens) {
-        sendResponse(
-          res,
-          StatusCode.UNAUTHORIZED,
-          MESSAGES.AUTH.INVALID_TOKEN,
-          false
-        );
-        return;
-      }
+      if (!tokens) throwError(MESSAGES.AUTH.INVALID_TOKEN,StatusCode.UNAUTHORIZED);
       setTokensInCookies(res, tokens.accessToken, tokens.refreshToken);
       sendResponse(res, StatusCode.OK, "", true);
       return;

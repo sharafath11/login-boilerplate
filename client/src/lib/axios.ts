@@ -43,12 +43,13 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await axiosInstance.get("/shared/refresh-token"); 
+        await axiosInstance.get("/auth/refresh-token"); 
         processQueue(null); 
         return axiosInstance(originalRequest); 
       } catch (refreshError) {
         processQueue(refreshError);
-        console.warn("Session expired. Please login again.");
+        window.location.href = "/login"; 
+        console.log("Session expired. Please login again.");
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

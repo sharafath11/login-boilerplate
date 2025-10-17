@@ -15,6 +15,7 @@ export const authenticateToken = (
   const accessToken = req.cookies?.token;
   const refreshToken = req.cookies?.refreshToken;
   if (!accessToken) {
+    
     return sendResponse(res, StatusCode.UNAUTHORIZED, MESSAGES.AUTH.AUTH_REQUIRED, false);
   }
 

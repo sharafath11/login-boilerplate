@@ -8,12 +8,13 @@ import { validateEmail } from "@/validation/emailValidation"
 import { Button } from "@/components/ui/button"
 import { authService } from "@/services/authService"
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/utils/toast"
+import { useRouter } from "next/navigation"
 
 const LoginCard: React.FC = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-
+const route=useRouter()
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validateEmail(email)) {
@@ -27,7 +28,8 @@ const LoginCard: React.FC = () => {
    
     setIsLoading(true)
      const res = await authService.login(email, password);
-     if (!res?.ok) return showErrorToast(res?.msg as string)
+    if (!res?.ok) return showErrorToast(res?.msg as string)
+     route.push("/")
      showSuccessToast(res.msg)
      setIsLoading(false)
   }
