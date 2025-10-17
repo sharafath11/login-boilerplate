@@ -1,6 +1,6 @@
 import { Model, Document, FilterQuery, UpdateQuery } from "mongoose";
 import { IBaseRepository } from "../core/interfaces/repository/IBaseRepository";
-import { messages } from "../const/messages";
+import { MESSAGES } from "../const/messages";
 
 
 export abstract class BaseRepository<T extends Document, U>
@@ -24,7 +24,7 @@ export abstract class BaseRepository<T extends Document, U>
       return result.toObject() as U
      
     } catch (error) {
-      throw this.handleError(error, messages.REPOSITORY.CREATE_ERROR);
+      throw this.handleError(error, MESSAGES.REPOSITORY.CREATE_ERROR);
     }
   }
 
@@ -32,7 +32,7 @@ export abstract class BaseRepository<T extends Document, U>
     try {
       return await this.model.countDocuments(filter);
     } catch (error) {
-      throw this.handleError(error, messages.REPOSITORY.COUNT_ERROR);
+      throw this.handleError(error, MESSAGES.REPOSITORY.COUNT_ERROR);
     }
   }
 
@@ -41,7 +41,7 @@ export abstract class BaseRepository<T extends Document, U>
     return await this.model.find(filter).lean().exec() as unknown as U[];
       
     } catch (error) {
-      throw this.handleError(error, messages.REPOSITORY.FIND_ALL_ERROR);
+      throw this.handleError(error, MESSAGES.REPOSITORY.FIND_ALL_ERROR);
     }
   }
 
@@ -53,7 +53,7 @@ export abstract class BaseRepository<T extends Document, U>
       const result = await this.model.updateMany(filter, update).lean().exec();
       return result.modifiedCount;
     } catch (error) {
-      throw this.handleError(error, messages.REPOSITORY.UPDATE_MANY_ERROR);
+      throw this.handleError(error, MESSAGES.REPOSITORY.UPDATE_MANY_ERROR);
     }
   }
   async updateOne(
@@ -63,7 +63,7 @@ export abstract class BaseRepository<T extends Document, U>
     try {
       return await this.model.findOneAndUpdate(filter, update, { new: true }).lean().exec() as unknown as U;
     } catch (error) {
-      throw this.handleError(error, messages.REPOSITORY.UPDATE_ONE_ERROR);
+      throw this.handleError(error, MESSAGES.REPOSITORY.UPDATE_ONE_ERROR);
     }
   }
 
@@ -71,7 +71,7 @@ export abstract class BaseRepository<T extends Document, U>
     try {
       return await this.model.findById(id).lean().exec()as unknown as U;;
     } catch (error) {
-      throw this.handleError(error, messages.REPOSITORY.FIND_BY_ID_ERROR);
+      throw this.handleError(error, MESSAGES.REPOSITORY.FIND_BY_ID_ERROR);
     }
   }
 
@@ -80,7 +80,7 @@ export abstract class BaseRepository<T extends Document, U>
       return await this.model.findOne(condition).lean().exec() as unknown as U;;
       
     } catch (error) {
-      throw this.handleError(error, messages.REPOSITORY.FIND_ONE_ERROR);
+      throw this.handleError(error, MESSAGES.REPOSITORY.FIND_ONE_ERROR);
     }
   }
 
@@ -90,7 +90,7 @@ export abstract class BaseRepository<T extends Document, U>
     } catch (error) {
       throw this.handleError(
         error,
-        messages.REPOSITORY.FIND_WITH_PASSWORD_ERROR
+        MESSAGES.REPOSITORY.FIND_WITH_PASSWORD_ERROR
       );
     }
   }
@@ -101,7 +101,7 @@ export abstract class BaseRepository<T extends Document, U>
     } catch (error) {
       throw this.handleError(
         error,
-        messages.REPOSITORY.FIND_WITH_PASSWORD_ERROR
+        MESSAGES.REPOSITORY.FIND_WITH_PASSWORD_ERROR
       );
     }
   }
@@ -114,7 +114,7 @@ async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
       .exec(); 
     return updated as U;
   } catch (error) {
-    throw this.handleError(error, messages.REPOSITORY.UPDATE_ERROR);
+    throw this.handleError(error, MESSAGES.REPOSITORY.UPDATE_ERROR);
   }
 }
 
@@ -124,7 +124,7 @@ async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
       const result = await this.model.findByIdAndDelete(id);
       return result !== null;
     } catch (error) {
-      throw this.handleError(error, messages.REPOSITORY.DELETE_ERROR);
+      throw this.handleError(error, MESSAGES.REPOSITORY.DELETE_ERROR);
     }
   }
 

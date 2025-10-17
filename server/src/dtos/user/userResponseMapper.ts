@@ -1,5 +1,5 @@
 import { IUser } from "../../types/userTypes";
-import {IUserLoginDTO } from "./IUserDto";
+import {IUserDto, IUserLoginDTO } from "./IUserDto";
 
 export class UserResponseMapper {
     static toLoginUserResponse(user:IUser,tocken:string,refreshToken:string): IUserLoginDTO {
@@ -9,6 +9,13 @@ export class UserResponseMapper {
             email: user.email,
             tocken,
             refreshToken
+        }
+    }
+    static toUserResponse(user: IUser): IUserDto{
+        return {
+            name: user.username,
+            email: user.email,
+            userId:user._id.toString()
         }
     }
 } 

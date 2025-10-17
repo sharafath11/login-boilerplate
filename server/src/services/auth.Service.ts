@@ -4,7 +4,7 @@ import { IAuthService } from "../core/interfaces/services/IAuthService";
 import { IAuthRepository } from "../core/interfaces/repository/IAuthRepository";
 import { TYPES } from "../core/types";
 import { throwError } from "../utils/response";
-import { messages } from "../const/messages";
+import { MESSAGES } from "../const/messages";
 import { UserResponseMapper } from "../dtos/user/userResponseMapper";
 import { IUserDto, IUserLoginDTO } from "../dtos/user/IUserDto";
 import { UserForwardMapper } from "../dtos/user/userForwardMapper";
@@ -21,10 +21,10 @@ export class AuthService implements IAuthService {
 
   async login(email: string, password: string): Promise<IUserLoginDTO> {
     const user = await this._authRepo.findOne({ email });
-    if (!user) throwError(messages.auth.accountNotFound);
+    if (!user) throwError(MESSAGES.AUTH.NOT_FOUND);
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throwError(messages.auth.invalidCredentials);
+    if (!isMatch) throwError(MESSAGES.AUTH.INVALID_CREDENTIALS);
     const token = generateAccessToken(user._id as unknown as string,"user");
     const refreshToken = generateRefreshToken(user._id as unknown as string,"user");
     return UserResponseMapper.toLoginUserResponse(user,token,refreshToken);
@@ -32,8 +32,13 @@ export class AuthService implements IAuthService {
 
     async signup(data: ISignup): Promise<void> {
     const existingUser = await this._authRepo.findOne({ email: data.email });
-    if (existingUser) throwError(messages.auth.emailAlreadyExists);
+    if (existingUser) throwError(MESSAGES.AUTH.EMAIL_ALREADY_REGISTERED);
     const userData = await UserForwardMapper.toUserEntity(data);
     await this._authRepo.create(userData);
+    }
+  async getUser(id: string): Promise<IUserDto> {
+    const user = await this._authRepo.findById(id);
+    if (!user) throwError(MESSAGES.COMMON.SERVER_ERROR);
+    return  UserResponseMapper.toUserResponse(user)
   }
 }

@@ -6,17 +6,18 @@ import { TokenPayload } from "../types/authTypes";
 dotenv.config()
 const SECRET_KEY = process.env.JWT_SECRET || "yourAccessSecret";
 const REFRESH_KEY = process.env.REFRESH_SECRET || "yourRefreshSecret";
-const ACCESS_EXPIRES_IN = "15m";
+const ACCESS_EXPIRES_IN = "1m";
 const REFRESH_EXPIRES_IN = "7d";
 
 
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.COOKIE_SECURE === "true",
-  sameSite: (process.env.COOKIE_SAMESITE as "lax" | "strict" | "none") || "lax",
-  domain: process.env.COOKIE_DOMAIN || undefined,
+  secure: false,        
+  sameSite: "lax" as const,
   path: "/",
 };
+
+
 
 // const cookieOptions = {
 //   httpOnly: true,

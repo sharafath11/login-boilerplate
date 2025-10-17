@@ -1,7 +1,8 @@
-import {IUserLoginDTO } from "../../../dtos/user/IUserDto";
+import {IUserDto, IUserLoginDTO } from "../../../dtos/user/IUserDto";
 import { ISignup } from "../../../types/authTypes";
 
 export interface IAuthService {
     login(email: string, password: string):Promise<IUserLoginDTO>,
-    signup(data:ISignup):Promise<void>
+    signup(data: ISignup): Promise<void>
+    getUser(id:string):Promise<IUserDto>
 }
